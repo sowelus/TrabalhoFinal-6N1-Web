@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:form id="formEdicao">
+        <h:panelGroup rendered="#{controleReceita.editando}">
+            <div class="ui-fluid">
+                <p:messages/>
+                <p:panelGrid columns="2" columnClasses="ui-grid-col-2, ui-grid-col-20"
+                             layout="grid" styleClass="ui-panelgrid-blank">
+                    <f:facet name="header">
+                        <p:outputLabel value="Edição de Receita Emitida"/>
+                    </f:facet>
+                    <p:outputLabel for="txtID" value="ID"/>
+                    <p:inputText id="txtID" value="#{controleReceita.objeto.id}" readonly="true"
+                                 size="10"/>
+                    <p:outputLabel for="txtDataPrescricao" value="Data de Prescrição"/>
+                    <p:calendar id="txtDataPrescricao" value="#{controleReceita.objeto.dataPrescricao}"
+                                mask="true" pattern="dd/MM/yyyy" placeholder="Obrigatório" navigator="true">
+                        <f:converter converterId="converterCalendar"/>
+                    </p:calendar>
+                    <p:outputLabel for="txtDataValidade" value="Data de Validade"/>
+                    <p:calendar id="txtDataValidade" value="#{controleReceita.objeto.dataValidade}"
+                                mask="true" pattern="dd/MM/yyyy" placeholder="Obrigatório" navigator="true">
+                        <f:converter converterId="converterCalendar"/>
+                    </p:calendar>
+                    <p:outputLabel for="txtObservacao" value="Observação"/>
+                    <p:inputText id="txtObservacao" value="#{controleReceita.objeto.observacao}"
+                                 size="500" maxlength="150"/>                    
+                    
+                    <p:outputLabel value="Paciente" for="selectPaciente"/>
+                    <p:selectOneMenu id="selectPaciente" value="#{controleReceita.objeto.paciente}">
+                        <f:converter converterId="converterPaciente"/>
+                        <f:selectItem itemLabel="Selecione um registro"
+                                      noSelectionOption="true"/>
+                        <f:selectItems value="#{controleReceita.daoPaciente.listaTodos}" 
+                                       var="s" itemLabel="#{s.nome}"/>
+                    </p:selectOneMenu>                    
+                    <p:outputLabel value="Médico" for="selectMedico"/>
+                    <p:selectOneMenu id="selectMedico" value="#{controleReceita.objeto.medico}">
+                        <f:converter converterId="converterMedico"/>
+                        <f:selectItem itemLabel="Selecione um registro" noSelectionOption="true"/>
+                        <f:selectItems value="#{controleReceita.daoMedico.listaTodos}" var="m" itemLabel="#{m.nome}"/>
+                    </p:selectOneMenu>                    
+                    <p:commandButton value="Salvar" icon="ui-icon-disk"
+                                     actionListener="#{controleReceita.salvar()}"
+                                     update="formEdicao :formListagem"/>
+                </p:panelGrid>
+                <h:panelGroup id="painelRemedio">
+                    <p:panelGrid columns="2" columnClasses="ui-grid-col-2, ui-grid-col-20"
+                        layout="grid" styleClass="ui-panelgrid-blank"
+                        rendered="#{controleReceita.editandoRemedio}">
+                        <f:facet name="header">
+                            <p:outputLabel value="Novo remédio para esta receita"/>
+                        </f:facet>             
+                        <p:outputLabel value="Remédio"/>
+                        <p:selectOneMenu id="selectRemedio" value="#{controleReceita.remedio}">
+                            <f:selectItem itemLabel="Selecione um registro" 
+                                          noSelectionOption="true"/>
+                            <f:selectItems value="#{controleReceita.daoRemedio.listaTodos}"
+                                           var="p" itemLabel="#{p.nome}"/>
+                            <f:converter converterId="converterRemedio"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value=""/>
+                        <p:commandButton value="Salvar Remédio" icon="ui-icon-disk"
+                                         actionListener="#{controleReceita.salvarRemedio()}"
+                                         id="btnSalvarRemedio"
+                                         process="btnSalvarRemedio selectRemedio"
+                                         update="@form"/>
+                    </p:panelGrid>
+                </h:panelGroup>
+            </div>
+            <h:panelGroup id="listagemRemedios">
+                <h:panelGroup rendered="#{!controleReceita.editandoRemedio}">
+                    <p:commandButton value="Novo remédio" icon="ui-icon-plus"
+                                     actionListener="#{controleReceita.novoRemedio()}"
+                                     update="painelRemedio listagemRemedios"
+                                     process="@this"/>
+                    <p:dataTable value="#{controleReceita.objeto.remedios}"
+                                 var="per" reflow="true">
+                        <f:facet name="header">
+                            <p:outputLabel value="Remédios preescritos na Receita"/>
+                        </f:facet>
+                        <p:column headerText="Nome">
+                            <p:outputLabel value="#{per.nome}"/>
+                        </p:column>
+                        <p:column headerText="Válido até">
+                            <p:outputLabel value="#{per.validade}">
+                                <f:converter converterId="converterCalendar"/>
+                            </p:outputLabel>
+                        </p:column>
+                        <p:column headerText="Laboratório">
+                            <p:outputLabel value="#{per.laboratorio}"/>
+                        </p:column>
+                        <p:column headerText="Contra indicação">
+                            <p:outputLabel value="#{per.contraIndicacao}"/>
+                        </p:column>
+                        <p:column headerText="Observação">
+                            <p:outputLabel value="#{per.observacao}"/>
+                        </p:column>
+                        <p:column headerText="Tipo">
+                            <p:outputLabel value="#{per.tipo}"/>
+                        </p:column>
+                        <p:column headerText="Ações">
+                            <div align="center">
+                                <p:commandButton icon="ui-icon-trash"
+                                  actionListener="#{controleReceita.removerRemedio(per)}"
+                                  process="@this" update="@form"/>
+                            </div>
+                        </p:column>                        
+                    </p:dataTable>
+                </h:panelGroup>
+            </h:panelGroup>
+        </h:panelGroup>
+    </h:form>
+</html>
+

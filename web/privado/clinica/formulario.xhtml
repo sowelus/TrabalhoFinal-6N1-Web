@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:form id="formEdicao">
+        <h:panelGroup rendered="#{controleClinica.editando}">
+            <div class="ui-fluid">
+                <p:messages/>
+                <p:panelGrid columns="2" columnClasses="ui-grid-col-2, ui-grid-col-20"
+                             layout="grid" styleClass="ui-panelgrid-blank">
+                    <f:facet name="header">
+                        <p:outputLabel value="Edição de Clinicas"/>
+                    </f:facet>
+                    <p:outputLabel for="txtID" value="ID"/>
+                    <p:inputText id="txtID" value="#{controleClinica.objeto.id}" readonly="true"
+                                 size="10"/>
+                    <p:outputLabel for="txtRazaoSocial" value="Razao Social"/>
+                    <p:inputText id="txtRazaoSocial" value="#{controleClinica.objeto.razaoSocial}"
+                                 size="40" maxlength="40"       
+                                 placeholder="Obrigatório"/>
+                    <p:outputLabel for="txtEndereco" value="Endereço"/>
+                    <p:inputText id="txtEndereco" value="#{controleClinica.objeto.endereco}"
+                                 size="500" maxlength="150"
+                                 placeholder="Obrigatório"/>
+                    
+                    <p:outputLabel for="txtTelefone" value="Telefone"/>
+                    <p:inputText id="txtTelefone" value="#{controleClinica.objeto.telefone}"
+                                 size="500" maxlength="150"
+                                 placeholder="Obrigatório"/>   
+                             
+                    <p:commandButton value="Salvar" icon="ui-icon-disk"
+                                     actionListener="#{controleClinica.salvar()}"
+                                     update="formEdicao :formListagem"/>
+                </p:panelGrid>
+                <h:panelGroup id="painelMedico">
+            <p:panelGrid columns="2" columnClasses="ui-grid-col-2, ui-grid-col-20"
+                                 layout="grid" styleClass="ui-panelgrid-blank"
+                                 rendered="#{controleClinica.editandoMedico}">
+                        <f:facet name="header">
+                            <p:outputLabel value="Novo médico da clínica"/>
+                        </f:facet>
+                        <p:outputLabel value="Médico"/>
+                           <p:selectOneMenu id="selectMedico" value="#{controleClinica.medico}">
+                            <f:selectItem itemLabel="Selecione um registro" 
+                                          noSelectionOption="true"/>
+                            <f:selectItems value="#{controleClinica.daoMedico.listaTodos}"
+                                           var="p" itemLabel="#{p.nome}"/>
+                            <f:converter converterId="converterMedico"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value=""/>
+                  
+                        <p:commandButton value="Salvar Médico" icon="ui-icon-disk"
+                                         actionListener="#{controleClinica.salvarMedico()}"
+                                         id="btnSalvarMedico"
+                                         process="btnSalvarMedico selectMedico"
+                                         update="@form"/>
+                    </p:panelGrid>
+                </h:panelGroup>
+            </div>
+              <h:panelGroup id="listagemMedicos">
+              <h:panelGroup rendered="#{!controleClinica.editandoMedico}">
+                    <p:commandButton value="Novo Médico" icon="ui-icon-plus"
+                                     actionListener="#{controleClinica.novoMedico()}"
+                                     update="painelMedico listagemMedicos"
+                                     process="@this"/>
+                    <p:dataTable value="#{controleClinica.objeto.medicos}"
+                                 var="col" reflow="true">
+                        <f:facet name="header">
+                            <p:outputLabel value="Médicos da clínica"/>
+                        </f:facet>                        
+                        <p:column headerText="Nome">
+                            <p:outputLabel value="#{col.nome}"/>
+                        </p:column>
+                        <p:column headerText="Cremers">
+                            <p:outputLabel value="#{col.cremers}"/>
+                        </p:column>
+                        <p:column headerText="E-mail">
+                            <p:outputLabel value="#{col.email}"/>
+                        </p:column>
+                                                            
+                        <p:column headerText="Ações">
+                            <div align="center">
+                                <p:commandButton icon="ui-icon-trash"
+                                                 actionListener="#{controleClinica.removerMedico(col)}"
+                                                 process="@this" update="@form"/>
+                            </div>
+                        </p:column>
+                    </p:dataTable>
+                </h:panelGroup>
+            </h:panelGroup>
+        </h:panelGroup>
+    </h:form>
+</html>
+

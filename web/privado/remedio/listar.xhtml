@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/templates/template.xhtml">
+        <ui:define name="titulo">Manutenção de Remédios da Clínica</ui:define>
+         <ui:define name="conteudo">                         
+            <h:form id="formListagem">
+                <h:panelGroup rendered="#{!controleRemedio.editando}">
+                   <p:outputLabel value="Remédios da Clínica"/>
+                    <p:messages/>
+                    <p:commandButton value="Novo" icon="ui-icon-plus"
+                                     actionListener="#{controleRemedio.novo()}"
+                                     update="formEdicao formListagem"/>
+                    <p:dataTable value="#{controleRemedio.dao.listaObjetos}" var="obj"
+                                 reflow="true" id="listagem" >
+                        <f:facet name="header">
+                            <div class="ui-fluid">
+                                <p:panelGrid columns="7" styleClass="ui-panelgrid-blank"
+                                             layout="grid"
+            columnClasses="ui-grid-col-1, ui-grid-col-2, ui-grid-col-1, ui-grid-col-3,
+            ui-grid-col-1, ui-grid-col-2, ui-grid-col-2">
+                                    <p:outputLabel value="Ordem:"/>
+                                    <p:selectOneMenu value="#{controleRemedio.dao.ordem}">
+                                        <f:selectItem itemLabel="ID" itemValue="id"/>
+                                        <f:selectItem itemLabel="Nome" itemValue="nome"/>
+                                        <f:selectItem itemLabel="Tipo" itemValue="tipo"/>
+                                        <p:ajax update="listagem"/>
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="Filtro"/>
+                                    <p:inputText value="#{controleRemedio.dao.filtro}"/>
+                                    <p:commandButton update="listagem"
+                                                     icon="ui-icon-search" title="Filtrar"/>
+                                    <p:outputLabel value="Máximo de objetos: "/>
+                                    <p:inputNumber value="#{controleRemedio.dao.maximoObjetos}"
+                                                   decimalPlaces="0" decimalSeparator=""
+                                                   thousandSeparator="">
+                                        <p:ajax update="listagem" event="blur"/>
+                                    </p:inputNumber>
+                                </p:panelGrid>
+                            </div>
+                        </f:facet>
+                        <f:facet name="footer">
+                            <p:outputLabel 
+                                value="#{controleRemedio.dao.mensagemNavegacao} &nbsp; &nbsp;"/>
+                            <p:commandButton actionListener="#{controleRemedio.dao.primeiro()}"
+                                             title="Primeiro" icon="ui-icon-seek-first"
+                                             update="listagem"/>
+                            <p:commandButton actionListener="#{controleRemedio.dao.anterior()}"
+                                             title="Anterior" icon="ui-icon-seek-prev"
+                                             update="listagem"/>                    
+                             <p:commandButton actionListener="#{controleRemedio.dao.proximo()}"
+                                             title="Próximo" icon="ui-icon-seek-next"
+                                             update="listagem"/>                    
+                            <p:commandButton actionListener="#{controleRemedio.dao.ultimo()}"
+                                             title="Ultimo" icon="ui-icon-seek-end"
+                                             update="listagem"/>                                                                             
+                        </f:facet>
+                        <p:column headerText="ID">
+                            <p:outputLabel value="#{obj.id}"/>
+                        </p:column>
+                        <p:column headerText="Remedio">
+                            <p:outputLabel value="#{obj.nome}"/>
+                        </p:column>
+                        <p:column headerText="Laboratório">
+                             <p:outputLabel value="#{obj.laboratorio}"/>                           
+                        </p:column>
+                        <p:column headerText="Tipo">
+                            <p:outputLabel value="#{obj.tipo}"/>
+                        </p:column>
+                                  
+                        <p:column headerText="Ações">
+                            <div align="center">
+                                <p:commandButton icon="ui-icon-pencil"
+                                                 actionListener="#{controleRemedio.alterar(obj.id)}"
+                                                 process="@form"
+                                                 update=":formEdicao formListagem"/>
+                                <p:commandButton icon="ui-icon-trash"
+                                                 actionListener="#{controleRemedio.excluir(obj.id)}"
+                                                 process="@form" update=":formListagem"/>
+                            </div>
+                        </p:column>
+                    </p:dataTable>
+                </h:panelGroup>
+            </h:form>
+            <ui:include src="/privado/remedio/formulario.xhtml"/>
+        </ui:define>
+    </ui:composition>
+</html>
+

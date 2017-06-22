@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:form id="formEdicao">
+        <h:panelGroup rendered="#{controlePaciente.editando}">
+            <div class="ui-fluid">
+                <p:messages/>
+                <p:panelGrid columns="2" columnClasses="ui-grid-col-2, ui-grid-col-20"
+                             layout="grid" styleClass="ui-panelgrid-blank">
+                    <f:facet name="header">
+                        <p:outputLabel value="Edição de Pacientes"/>
+                    </f:facet>                            
+                    
+                    <p:outputLabel for="txtID" value="ID"/>
+                    <p:inputText id="txtID" value="#{controlePaciente.objeto.id}" readonly="true"
+                                 size="10"/>
+                    <p:outputLabel for="txtNome" value="Nome"/>
+                    <p:inputText id="txtNome" value="#{controlePaciente.objeto.nome}"
+                                 size="500" maxlength="150"/>                    
+                    <p:outputLabel for="txtEmail" value="E-mail"/>
+                    <p:inputText id="txtEmail" value="#{controlePaciente.objeto.email}"
+                                 size="500" maxlength="150"/>
+                    <p:outputLabel for="txtEndereco" value="Endereço"/>
+                    <p:inputText id="txtEndereco" value="#{controlePaciente.objeto.endereco}"
+                                 size="500" maxlength="150"/>                 
+                    <p:outputLabel for="txtTelefone" value="Telefone"/>
+                    <p:inputText id="txtTelefone" value="#{controlePaciente.objeto.telefone}"
+                                 size="500" maxlength="150"/>                 
+                    
+                              
+                    <p:commandButton value="Salvar" icon="ui-icon-disk"
+                                     actionListener="#{controlePaciente.salvar()}"
+                                     update="formEdicao :formListagem"/>
+                </p:panelGrid>
+              </div>          
+        </h:panelGroup>
+    </h:form>
+</html>
+
